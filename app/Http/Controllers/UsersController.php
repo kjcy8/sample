@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
+use Auth;
 
 class UsersController extends Controller
 {
@@ -35,8 +36,7 @@ class UsersController extends Controller
         // 验证
         $this->validate($request, [
             'name' => 'required|max:50',
-            //'email' => 'required|email|unqiue:users|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|unique:users|max:255',
             'password' => 'required|confirmed|min:6'
         ]);
 
