@@ -35,6 +35,10 @@
                         <input type="password" name="password_confirmation" class="form-control" value="{{ old('password_confirmation') }}">
                     </div>
 
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="remember">remember me</label>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">sign up</button>
 
                 </form>
