@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
 use Auth;
+use Mail;
 
 class UsersController extends Controller
 {
@@ -13,7 +14,7 @@ class UsersController extends Controller
     {
         // auth
         $this->middleware('auth', [
-            'except' => ['show', 'create', 'store','index']
+            'except' => ['show', 'create', 'store','index', 'confirmEmail']
         ]);
 
         // guest
@@ -66,10 +67,45 @@ class UsersController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // 自动登录
-        Auth::login($user);
+        // 发送验证邮件
+        $this->sendEmailConfirmationTo($user);
 
-        session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
+        session()->flash('success', '验证邮件已发送到你的注册邮箱，请注意查收');
+        return redirect('/');
+    }
+
+    /*
+     * 发送邮件
+     *
+     */
+    protected function sendEmailConfirmationTo($user)
+    {
+        $view = 'emails.confirm';
+        $data = compact('user');
+        $from = 'sample@qq.com';
+        $name = 'Sample Laravel';
+        $to = $user->email;
+        $subject = 'Thanks for signing up with Sample! Please confirm your email.';
+
+        Mail::send($view, $data, function($message) use ($from, $name, $to, $subject){
+            $message->from($from, $name)->to($to)->subject($subject);
+        });
+    }
+
+    /*
+     * 确认邮件
+     *
+     */
+    public function confirmEmail($token)
+    {
+        $user = User::where('activation_token', $token)->firstOrFail();
+
+        $user->activated = true;
+        $user->activation_token = null;
+        $user->save();
+
+        Auth::login($user);
+        session()->flash('success', '激活成功!');
         return redirect()->route('users.show', [$user]);
     }
 

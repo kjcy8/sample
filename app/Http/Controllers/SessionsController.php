@@ -29,9 +29,16 @@ class SessionsController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->has('remember'))){
-            // 登录成功
-            session()->flash('success', 'welcome back!');
-            return redirect()->route('users.show', [Auth::user()]);
+            // 账户是否激活
+            if(Auth::user()->activated){
+                session()->flash('success', 'welcome back!');
+                return redirect()->route('users.show', [Auth::user()]);
+            }
+            else{
+                Auth::logout();
+                session()->flash('warning', 'sorry, your account has not yet been activated');
+                return redirect()->route('/');
+            }
         }
         else{
             // 登录失败
