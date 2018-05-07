@@ -82,13 +82,13 @@ class UsersController extends Controller
     {
         $view = 'emails.confirm';
         $data = compact('user');
-        $from = 'sample@qq.com';
-        $name = 'Sample Laravel';
+        //$from = 'sample@qq.com';
+        //$name = 'Sample Laravel';
         $to = $user->email;
         $subject = 'Thanks for signing up with Sample! Please confirm your email.';
 
-        Mail::send($view, $data, function($message) use ($from, $name, $to, $subject){
-            $message->from($from, $name)->to($to)->subject($subject);
+        Mail::send($view, $data, function($message) use ($to, $subject){
+            $message->to($to)->subject($subject);
         });
     }
 
