@@ -147,7 +147,7 @@ class UsersController extends Controller
     }
 
     /*
-     * 删除
+     * 删除用户
      *
      */
     public function destroy(User $user)
@@ -158,4 +158,25 @@ class UsersController extends Controller
         return back();
     }
 
+    /**
+     * 粉丝列表
+     *
+     */
+    public function followers(User $user)
+    {
+        $users = $user->followers()->paginate(10);
+        $title = '我的粉丝';
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
+    /**
+     * 关注列表
+     *
+     */
+    public function followings(User $user)
+    {
+        $users = $user->followings()->paginate(10);
+        $title = '关注的人';
+        return view('users.show_follow', compact('users', 'title'));
+    }
 }
